@@ -1,15 +1,31 @@
 use std::collections::HashMap;
 
-pub struct Product<'a> {
-    pub id: u32,
-    pub name: &'a mut String,
-    pub price: f32,
-}
+pub mod product;
 
 pub struct Item {
     pub id: u32,
     pub qty: u32,
     sub_total: f32,
+}
+
+impl Item {
+    pub fn new(id: u32, qty: u32, product: &product::Product) -> Item {
+        let sub_total = qty as f32 * product.price;
+        Item{
+            id,
+            qty,
+            sub_total,
+        }
+    }
+
+    pub fn update(&mut self, qty: u32, product: &product::Product) {
+        self.qty = qty;
+        self.sub_total = qty as f32 * product.price;
+    }
+
+    pub fn get_sub_total(&self) -> f32 {
+        self.sub_total
+    }
 }
 
 pub struct Cart<'a, 'b: 'a> {
@@ -29,7 +45,7 @@ impl<'a, 'b>Cart<'a, 'b> {
         self.items.insert(item.id, item);
     }
 
-    pub fn update_quantity(&mut self, id: u32, qty: u32, product: &Product){
+    pub fn update_quantity(&mut self, id: u32, qty: u32, product: &product::Product){
         if let Some(item) = self.get_item(id) {
             item.update(qty, &product);
         }
@@ -52,35 +68,5 @@ impl<'a, 'b>Cart<'a, 'b> {
             total = total + value.sub_total;
         }
         total
-    }
-}
-
-impl Item {
-    pub fn new(id: u32, qty: u32, product: &Product) -> Item {
-        let sub_total = qty as f32 * product.price;
-        Item{
-            id,
-            qty,
-            sub_total,
-        }
-    }
-
-    pub fn update(&mut self, qty: u32, product: &Product) {
-        self.qty = qty;
-        self.sub_total = qty as f32 * product.price;
-    }
-
-    pub fn get_sub_total(&self) -> f32 {
-        self.sub_total
-    }
-}
-
-impl<'a> Product<'a> {
-    pub fn new(id: u32, name: &'a mut String, price: f32) -> Product{
-        Product{
-            id,
-            name,
-            price,
-        }
     }
 }
