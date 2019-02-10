@@ -11,6 +11,7 @@ pub enum Status {
 pub struct Billing {
     pub name:  String,
     pub address: String,
+    pub shipping_cost: f32,
 }
 
 #[derive(Debug)]
@@ -29,5 +30,9 @@ impl<'c, 'a, 'b, 's, 'd> Order<'c, 'a, 'b, 's, 'd> {
             billing,
             status: Status::Created(String::from("CREATED")),
         }
+    }
+
+    pub fn get_total(&self) -> f32 {
+        self.cart.get_total() + self.billing.shipping_cost
     }
 }
